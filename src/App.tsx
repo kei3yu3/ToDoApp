@@ -22,13 +22,13 @@ function App() {
   };
 
   const deleteTask = (id: number) => {
-    setTasks(tasks.filter((task) => task.id !== id));
+    setTasks(tasks.filter((task: Task) => task.id !== id));
   };
 
   // ★ 新しい処理：指定されたIDのタスクの完了状態（isDone）を反転させる
   const toggleTaskDone = (id: number) => {
     setTasks(
-      tasks.map((task) => {
+      tasks.map((task: Task) => {
         if (task.id === id) {
           // idが一致したタスクだけ、isDoneの中身を「現在の逆（!）」にする
           return { ...task, isDone: !task.isDone };
