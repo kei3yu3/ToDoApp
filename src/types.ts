@@ -5,3 +5,6 @@ export type Task = {
   dueDate: string;
   category?: string; // ?は「なくても良い（任意）」という意味です
 };
+
+// （すべて、今日、今週、今月 の4種類のどれかになるというルール）
+export type FilterType = 'all' | 'today' | 'week' | 'month';

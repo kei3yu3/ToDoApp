@@ -1,13 +1,20 @@
 import { Sidebar } from './Sidebar';
+import type { FilterType } from '../../types';
 
-export const AppLayout = ({ children }: { children: React.ReactNode }) => {
+// ★ 親から受け取るルールを追加
+type Props = {
+  children: React.ReactNode;
+  currentFilter: FilterType;
+  onFilterChange: (filter: FilterType) => void;
+};
+
+export const AppLayout = ({ children, currentFilter, onFilterChange }: Props) => {
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
-      {/* 左側にサイドバーを配置 */}
-      <Sidebar />
+      {/* ★ Sidebar へ横流しする */}
+      <Sidebar currentFilter={currentFilter} onFilterChange={onFilterChange} />
       
-      {/* 右側にメインコンテンツ（childrenに入る中身）を配置 */}
-      <main style={{ flex: 1, padding: '20px' }}>
+      <main style={{ flex: 1, padding: '20px', backgroundColor: '#f3f4f6' }}>
         {children}
       </main>
     </div>
