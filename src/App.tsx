@@ -22,16 +22,26 @@ function App() {
   };
 
   const deleteTask = (id: number) => {
-    setTasks(tasks.filter((task: Task) => task.id !== id));
+    setTasks(tasks.filter((task) => task.id !== id));
   };
 
-  // ★ 新しい処理：指定されたIDのタスクの完了状態（isDone）を反転させる
   const toggleTaskDone = (id: number) => {
     setTasks(
-      tasks.map((task: Task) => {
+      tasks.map((task) => {
         if (task.id === id) {
-          // idが一致したタスクだけ、isDoneの中身を「現在の逆（!）」にする
           return { ...task, isDone: !task.isDone };
+        }
+        return task;
+      })
+    );
+  };
+
+  // ★ 新しい処理：指定されたIDのタスクの名前と日付を新しいものに書き換える
+  const editTask = (id: number, newTitle: string, newDueDate: string) => {
+    setTasks(
+      tasks.map((task) => {
+        if (task.id === id) {
+          return { ...task, title: newTitle, dueDate: newDueDate };
         }
         return task;
       })
@@ -43,8 +53,13 @@ function App() {
       <h1 style={{ fontSize: '24px', marginBottom: '20px' }}>今週のタスク</h1>
       <TaskForm onAddTask={addTask} />
       
-      {/* ★ TaskListに「切り替える機能(toggleTaskDone)」を追加で渡す */}
-      <TaskList tasks={tasks} onDeleteTask={deleteTask} onToggleTaskDone={toggleTaskDone} />
+      {/* ★ TaskListに「編集する機能(editTask)」を追加で渡す */}
+      <TaskList 
+        tasks={tasks} 
+        onDeleteTask={deleteTask} 
+        onToggleTaskDone={toggleTaskDone} 
+        onEditTask={editTask} 
+      />
     </AppLayout>
   );
 }
