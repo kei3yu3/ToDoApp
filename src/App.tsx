@@ -88,9 +88,20 @@ function App() {
   // ★ 絞り込まれた結果の配列を変数に入れる
   const filteredTasks = getFilteredTasks();
 
+  // ★ 新しい処理：現在の filter の値に合わせて表示するタイトル文字列を決める
+  const getPageTitle = () => {
+    if (filter === 'all') return 'すべてのタスク';
+    if (filter === 'today') return '今日のタスク';
+    if (filter === 'week') return '今週のタスク';
+    if (filter === 'month') return '今月のタスク';
+    return 'タスク';
+  };
+
   return (
     <AppLayout currentFilter={filter} onFilterChange={setFilter}>
-      <h1 style={{ fontSize: '24px', marginBottom: '20px' }}>今週のタスク</h1>
+      {/* ★ 固定の文字を削除し、getPageTitle() の結果を波括弧で埋め込む */}
+      <h1 style={{ fontSize: '24px', marginBottom: '20px' }}>{getPageTitle()}</h1>
+      
       <TaskForm onAddTask={addTask} />
       
       {/* ★ 全件の tasks ではなく、絞り込み後の filteredTasks を渡すように変更！ */}
