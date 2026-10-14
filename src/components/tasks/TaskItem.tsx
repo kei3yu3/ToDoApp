@@ -57,6 +57,13 @@ export const TaskItem = ({ task, onDeleteTask, onToggleTaskDone, onEditTask }: P
           <span style={{ flex: 1, fontSize: '16px', textDecoration: task.isDone ? 'line-through' : 'none' }}>
             {task.title}
           </span>
+          {/* ★ カテゴリが存在する場合だけ、ラベルを表示する */}
+          {task.category && (
+            <span style={{ backgroundColor: '#e2e8f0', color: '#475569', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', marginRight: '10px' }}>
+              {task.category}
+            </span>
+          )}
+          
           <span style={{ color: '#666', marginRight: '15px', fontSize: '14px' }}>
             ({task.dueDate})
           </span>

@@ -25,6 +25,8 @@ function App() {
 
   // ★ 新しいState：現在選ばれている絞り込みモード（初期値は 'all'）
   const [filter, setFilter] = useState<FilterType>('all');
+  // ★ 新しいState：現在選ばれているカテゴリ（初期値は 'all'）
+  const [categoryFilter, setCategoryFilter] = useState<string>('all');
 
   // ★ 新しい処理：tasks の中身が変わるたびに、自動的に保存する
   useEffect(() => {
@@ -32,12 +34,13 @@ function App() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
   }, [tasks]); // ← この [tasks] が「tasksが変化した時だけ実行してね」という指示
   
-  const addTask = (title: string, dueDate: string) => {
+  const addTask = (title: string, dueDate: string, category: string) => {
     const newTask: Task = {
       id: Date.now(),
       title: title,
       isDone: false,
       dueDate: dueDate,
+      category: category,
     };
     setTasks([...tasks, newTask]);
   };
@@ -90,16 +93,24 @@ function App() {
     const nwDd = String(nextWeek.getDate()).padStart(2, '0');
     const nextWeekStr = `${nwYyyy}-${nwMm}-${nwDd}`;
 
-    // フィルターの条件に合わせて tasks を絞り込む
     return tasks.filter((task) => {
-      if (filter === 'all') return true; // すべて表示
-      if (filter === 'today') return task.dueDate === todayStr; // 今日と完全一致
-      if (filter === 'month') return task.dueDate.startsWith(thisMonthStr); // 今月（前方一致）
+      // 1. まず日付の条件をチェック
+      let isTimeMatch = true;
+      if (filter === 'today') isTimeMatch = task.dueDate === todayStr;
+      if (filter === 'month') isTimeMatch = task.dueDate.startsWith(thisMonthStr);
       if (filter === 'week') {
-        // 今日から1週間後までの範囲内か判定（文字列の辞書順比較が使えます）
-        return task.dueDate >= todayStr && task.dueDate <= nextWeekStr;
+        isTimeMatch = task.dueDate >= todayStr && task.dueDate <= nextWeekStr;
       }
-      return true;
+
+      // 2. 次にカテゴリの条件をチェック
+      let isCategoryMatch = true;
+      if (categoryFilter !== 'all') {
+        // 'all' 以外の時だけ、タスクのカテゴリと一致するかチェック
+        isCategoryMatch = task.category === categoryFilter;
+      }
+
+      // 3. 両方の条件をクリアしたタスクだけを残す
+      return isTimeMatch && isCategoryMatch;
     });
   };
 
@@ -116,19 +127,16 @@ function App() {
   };
 
   return (
-    <AppLayout currentFilter={filter} onFilterChange={setFilter}>
-      {/* ★ 固定の文字を削除し、getPageTitle() の結果を波括弧で埋め込む */}
+    // ★ AppLayout に categoryFilter と setCategoryFilter を追加で渡す
+    <AppLayout 
+      currentFilter={filter} 
+      onFilterChange={setFilter}
+      currentCategory={categoryFilter}
+      onCategoryChange={setCategoryFilter}
+    >
       <h1 style={{ fontSize: '24px', marginBottom: '20px' }}>{getPageTitle()}</h1>
-
       <TaskForm onAddTask={addTask} />
-      
-      {/* ★ 全件の tasks ではなく、絞り込み後の filteredTasks を渡すように変更！ */}
-      <TaskList 
-        tasks={filteredTasks} 
-        onDeleteTask={deleteTask} 
-        onToggleTaskDone={toggleTaskDone} 
-        onEditTask={editTask} 
-      />
+      <TaskList tasks={filteredTasks} onDeleteTask={deleteTask} onToggleTaskDone={toggleTaskDone} onEditTask={editTask} />
     </AppLayout>
   );
 }

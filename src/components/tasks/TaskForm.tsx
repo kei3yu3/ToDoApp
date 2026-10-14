@@ -2,13 +2,14 @@ import { useState } from 'react';
 
 // 親から受け取る関数のルール
 type Props = {
-  onAddTask: (title: string, dueDate: string) => void;
+  onAddTask: (title: string, dueDate: string, category: string) => void;
 };
 
 export const TaskForm = ({ onAddTask }: Props) => {
   // 入力欄の文字を記憶するためのState
   const [title, setTitle] = useState('');
   const [dueDate, setDueDate] = useState('');
+  const [category, setCategory] = useState('開発');
 
   // 追加ボタンが押された時の処理
   const handleSubmit = (e: React.FormEvent) => {
@@ -17,11 +18,12 @@ export const TaskForm = ({ onAddTask }: Props) => {
     if (!title) return; // タイトルが空っぽなら追加しない
 
     // ★ 親から渡された追加機能を実行！
-    onAddTask(title, dueDate);
+    onAddTask(title, dueDate, category);
 
     // 追加した後は、入力欄を空に戻す
     setTitle('');
     setDueDate('');
+    setCategory('開発'); // 追加後は初期値に戻す
   };
 
   return (
@@ -42,6 +44,17 @@ export const TaskForm = ({ onAddTask }: Props) => {
         onChange={(e) => setDueDate(e.target.value)}
         style={{ padding: '8px', marginRight: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
       />
+      {/* ★ カテゴリを選ぶプルダウンを追加 */}
+      <select
+        value={category}
+        onChange={(e) => setCategory(e.target.value)}
+        style={{ padding: '8px', marginRight: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+      >
+        <option value="開発">開発</option>
+        <option value="音楽">音楽</option>
+        <option value="仕事">仕事</option>
+        <option value="プライベート">プライベート</option>
+      </select>
       <button 
         type="submit"
         style={{ padding: '8px 16px', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
