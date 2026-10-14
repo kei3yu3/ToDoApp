@@ -1,19 +1,37 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AppLayout } from './components/layout/AppLayout';
 import { TaskForm } from './components/tasks/TaskForm';
 import { TaskList } from './components/tasks/TaskList';
 import type { Task, FilterType } from './types';
 
+// ★ 保存する時の「データの名前（合言葉）」を決めておく
+const STORAGE_KEY = 'todo_app_tasks';
+
 function App() {
-  const [tasks, setTasks] = useState<Task[]>([
-    { id: 1, title: 'Reactのコンポーネント分割', isDone: false, dueDate: '2026-10-12', category: '開発' },
-    { id: 2, title: '画面設計の復習', isDone: true, dueDate: '2026-10-12', category: '開発' },
-    { id: 3, title: 'ギターのトラスロッド調整', isDone: false, dueDate: '2026-10-15', category: '音楽' },
-  ]);
+  // ★ 初期値の設定を「ローカルストレージを確認する」ように変更
+  const [tasks, setTasks] = useState<Task[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      // 保存されたデータがあれば、それを復元して使う
+      return JSON.parse(saved);
+    }
+    // なければ、とりあえず最初の3件を入れる
+    return [
+      { id: 1, title: 'Reactのコンポーネント分割', isDone: false, dueDate: '2026-10-12', category: '開発' },
+      { id: 2, title: '画面設計の復習', isDone: true, dueDate: '2026-10-12', category: '開発' },
+      { id: 3, title: 'ギターのトラスロッド調整', isDone: false, dueDate: '2026-10-15', category: '音楽' },
+    ];
+  });
 
   // ★ 新しいState：現在選ばれている絞り込みモード（初期値は 'all'）
   const [filter, setFilter] = useState<FilterType>('all');
 
+  // ★ 新しい処理：tasks の中身が変わるたびに、自動的に保存する
+  useEffect(() => {
+    // tasksデータを文字列（JSON）に変換してブラウザに保存
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+  }, [tasks]); // ← この [tasks] が「tasksが変化した時だけ実行してね」という指示
+  
   const addTask = (title: string, dueDate: string) => {
     const newTask: Task = {
       id: Date.now(),
@@ -101,7 +119,7 @@ function App() {
     <AppLayout currentFilter={filter} onFilterChange={setFilter}>
       {/* ★ 固定の文字を削除し、getPageTitle() の結果を波括弧で埋め込む */}
       <h1 style={{ fontSize: '24px', marginBottom: '20px' }}>{getPageTitle()}</h1>
-      
+
       <TaskForm onAddTask={addTask} />
       
       {/* ★ 全件の tasks ではなく、絞り込み後の filteredTasks を渡すように変更！ */}
