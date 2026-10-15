@@ -72,7 +72,7 @@ function App() {
     );
   };
 
-// ★ 新しい処理：現在の filter の値に合わせて、表示するタスクだけを抽出する関数
+  // 現在の filter の値に合わせて、表示するタスクだけを抽出する関数
   const getFilteredTasks = () => {
     const today = new Date();
     
@@ -93,8 +93,8 @@ function App() {
     const nwDd = String(nextWeek.getDate()).padStart(2, '0');
     const nextWeekStr = `${nwYyyy}-${nwMm}-${nwDd}`;
 
-    return tasks.filter((task) => {
-      // 1. まず日付の条件をチェック
+    // ★ 1. まずは今まで通り filter で絞り込む
+    const filtered = tasks.filter((task) => {
       let isTimeMatch = true;
       if (filter === 'today') isTimeMatch = task.dueDate === todayStr;
       if (filter === 'month') isTimeMatch = task.dueDate.startsWith(thisMonthStr);
@@ -102,15 +102,27 @@ function App() {
         isTimeMatch = task.dueDate >= todayStr && task.dueDate <= nextWeekStr;
       }
 
-      // 2. 次にカテゴリの条件をチェック
       let isCategoryMatch = true;
       if (categoryFilter !== 'all') {
-        // 'all' 以外の時だけ、タスクのカテゴリと一致するかチェック
         isCategoryMatch = task.category === categoryFilter;
       }
 
-      // 3. 両方の条件をクリアしたタスクだけを残す
       return isTimeMatch && isCategoryMatch;
+    });
+
+    // ★ 2. 絞り込んだ結果 (filtered) を sort で並び替えてから返す
+    return filtered.sort((a, b) => {
+      // ① 完了・未完了での並び替え（未完了を上に、完了済みを下に）
+      if (a.isDone !== b.isDone) {
+        // a が完了済み(true)なら後ろへ(1)、未完了(false)なら前へ(-1)
+        return a.isDone ? 1 : -1;
+      }
+
+      // ② 完了状態が同じ場合（両方未完了、または両方完了済み）は、日付の近い順（昇順）にする
+      if (a.dueDate < b.dueDate) return -1; // aの日付のほうが古ければ前へ(-1)
+      if (a.dueDate > b.dueDate) return 1;  // aの日付のほうが新しければ後ろへ(1)
+      
+      return 0; // 日付も同じなら順番はそのまま
     });
   };
 
