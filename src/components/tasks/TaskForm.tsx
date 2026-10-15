@@ -3,13 +3,14 @@ import { useState } from 'react';
 // 親から受け取る関数のルール
 type Props = {
   onAddTask: (title: string, dueDate: string, category: string) => void;
+  categories: string[];
 };
 
-export const TaskForm = ({ onAddTask }: Props) => {
+export const TaskForm = ({ onAddTask, categories }: Props) => {
   // 入力欄の文字を記憶するためのState
   const [title, setTitle] = useState('');
   const [dueDate, setDueDate] = useState('');
-  const [category, setCategory] = useState('開発');
+  const [category, setCategory] = useState(categories[0] || '未設定');
 
   // 追加ボタンが押された時の処理
   const handleSubmit = (e: React.FormEvent) => {
@@ -50,10 +51,9 @@ export const TaskForm = ({ onAddTask }: Props) => {
         onChange={(e) => setCategory(e.target.value)}
         style={{ padding: '8px', marginRight: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
       >
-        <option value="開発">開発</option>
-        <option value="音楽">音楽</option>
-        <option value="仕事">仕事</option>
-        <option value="プライベート">プライベート</option>
+        {categories.map((c) => (
+          <option key={c} value={c}>{c}</option>
+        ))}
       </select>
       <button 
         type="submit"

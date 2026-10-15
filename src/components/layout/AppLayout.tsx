@@ -8,9 +8,12 @@ type Props = {
   onFilterChange: (filter: FilterType) => void;
   currentCategory: string;
   onCategoryChange: (category: string) => void;
+  categories: string[];
+  onAddCategory: (category: string) => void;
+  onDeleteCategory: (category: string) => void;
 };
 
-export const AppLayout = ({ children, currentFilter, onFilterChange, currentCategory, onCategoryChange }: Props) => {
+export const AppLayout = ({ children, currentFilter, onFilterChange, currentCategory, onCategoryChange, categories, onAddCategory, onDeleteCategory }: Props) => {
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       {/* ★ Sidebar へ横流しする */}
@@ -19,6 +22,9 @@ export const AppLayout = ({ children, currentFilter, onFilterChange, currentCate
         onFilterChange={onFilterChange}
         currentCategory={currentCategory}
         onCategoryChange={onCategoryChange}
+        categories={categories}
+        onAddCategory={onAddCategory}
+        onDeleteCategory={onDeleteCategory}
       />
       
       <main style={{ flex: 1, padding: '20px', backgroundColor: '#f3f4f6' }}>

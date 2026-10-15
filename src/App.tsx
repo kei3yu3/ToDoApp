@@ -5,7 +5,8 @@ import { TaskList } from './components/tasks/TaskList';
 import type { Task, FilterType } from './types';
 
 // ★ 保存する時の「データの名前（合言葉）」を決めておく
-const STORAGE_KEY = 'todo_app_tasks';
+const STORAGE_KEY = 'todo_app_tasks_v2';
+const CATEGORIES_KEY = 'todo_app_categories_v2';
 
 function App() {
   // ★ 初期値の設定を「ローカルストレージを確認する」ように変更
@@ -17,16 +18,59 @@ function App() {
     }
     // なければ、とりあえず最初の3件を入れる
     return [
-      { id: 1, title: 'Reactのコンポーネント分割', isDone: false, dueDate: '2026-10-12', category: '開発' },
-      { id: 2, title: '画面設計の復習', isDone: true, dueDate: '2026-10-12', category: '開発' },
-      { id: 3, title: 'ギターのトラスロッド調整', isDone: false, dueDate: '2026-10-15', category: '音楽' },
+      { id: 1, title: 'Reactのコンポーネント分割', isDone: false, dueDate: '2026-10-12', category: '未設定' },
+      { id: 2, title: '画面設計の復習', isDone: true, dueDate: '2026-10-12', category: '未設定' },
+      { id: 3, title: 'ギターのトラスロッド調整', isDone: false, dueDate: '2026-10-15', category: '未設定' },
     ];
   });
 
-  // ★ 新しいState：現在選ばれている絞り込みモード（初期値は 'all'）
+  // 現在選ばれている絞り込みモード（初期値は 'all'）
   const [filter, setFilter] = useState<FilterType>('all');
-  // ★ 新しいState：現在選ばれているカテゴリ（初期値は 'all'）
+  // 現在選ばれているカテゴリ（初期値は 'all'）
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
+
+  // ★ 新しいState：カテゴリのリスト
+  const [categories, setCategories] = useState<string[]>(() => {
+    const saved = localStorage.getItem(CATEGORIES_KEY);
+    if (saved) return JSON.parse(saved);
+    return ['未設定']; // 初期カテゴリ
+  });
+
+  // ★ tasksの保存に加えて、categoriesも保存するuseEffectを追加
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+  }, [tasks]);
+
+  useEffect(() => {
+    localStorage.setItem(CATEGORIES_KEY, JSON.stringify(categories));
+  }, [categories]);
+
+  // ★ カテゴリを新しく追加する関数
+  const addCategory = (newCategory: string) => {
+    // 空白じゃなく、かつ、まだ存在しないカテゴリなら追加する
+    if (newCategory.trim() !== '' && !categories.includes(newCategory)) {
+      setCategories([...categories, newCategory]);
+    }
+  };
+
+  // ★ 新しい処理：カテゴリを削除する関数
+  const deleteCategory = (targetCategory: string) => {
+    // 「未設定」は削除できないように守る
+    if (targetCategory === '未設定') return;
+
+    // 1. カテゴリ一覧から削除
+    setCategories(categories.filter((c) => c !== targetCategory));
+
+    // 2. 削除されたカテゴリを使っていたタスクを「未設定」に戻す
+    setTasks(tasks.map((task) => 
+      task.category === targetCategory ? { ...task, category: '未設定' } : task
+    ));
+
+    // 3. もし「今絞り込んでいるカテゴリ」を削除した場合は「すべて」に戻す
+    if (categoryFilter === targetCategory) {
+      setCategoryFilter('all');
+    }
+  };
 
   // ★ 新しい処理：tasks の中身が変わるたびに、自動的に保存する
   useEffect(() => {
@@ -145,9 +189,12 @@ function App() {
       onFilterChange={setFilter}
       currentCategory={categoryFilter}
       onCategoryChange={setCategoryFilter}
+      categories={categories}
+      onAddCategory={addCategory}
+      onDeleteCategory={deleteCategory}
     >
       <h1 style={{ fontSize: '24px', marginBottom: '20px' }}>{getPageTitle()}</h1>
-      <TaskForm onAddTask={addTask} />
+      <TaskForm onAddTask={addTask} categories={categories}/>
       <TaskList tasks={filteredTasks} onDeleteTask={deleteTask} onToggleTaskDone={toggleTaskDone} onEditTask={editTask} />
     </AppLayout>
   );
