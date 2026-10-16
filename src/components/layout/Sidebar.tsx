@@ -17,15 +17,18 @@ export const Sidebar = ({ currentFilter, onFilterChange, currentCategory, onCate
   const [newCategoryName, setNewCategoryName] = useState('');
 
   // メニューの見た目を決める設定（選ばれているものは青色＋太字にする）
-  const getListStyle = (filter: FilterType) => ({
-    padding: '10px',
-    cursor: 'pointer',
-    backgroundColor: currentFilter === filter ? '#e0f2fe' : 'transparent',
-    color: currentFilter === filter ? '#0284c7' : '#333',
-    fontWeight: currentFilter === filter ? 'bold' : 'normal',
-    borderRadius: '4px',
-    marginBottom: '5px'
-  });
+  const getListClass = (filter: FilterType) => {
+    // 共通のクラス（余白、角丸、カーソル、色の変化アニメーション）
+    const baseClass = "p-2.5 rounded cursor-pointer mb-1 transition-colors";
+    
+    if (currentFilter === filter) {
+      // 選ばれている時のクラス
+      return `${baseClass} bg-sky-100 text-sky-600 font-bold`;
+    } else {
+      // 選ばれていない時（マウスを乗せると薄いグレーになる）
+      return `${baseClass} text-gray-800 hover:bg-gray-200`;
+    }
+  };
 
   // ★ 追加ボタンが押された時の処理
   const handleAddCategory = () => {
@@ -35,23 +38,23 @@ export const Sidebar = ({ currentFilter, onFilterChange, currentCategory, onCate
   };
 
   return (
-    <div style={{ width: '200px', padding: '20px', borderRight: '1px solid #ccc', backgroundColor: '#f9fafb' }}>
-      <h2 style={{ fontSize: '18px', marginBottom: '15px' }}>期間で絞り込み</h2>
-      <ul style={{ listStyle: 'none', padding: 0, marginBottom: '30px' }}>
-        <li style={getListStyle('all')} onClick={() => onFilterChange('all')}>すべて</li>
-        <li style={getListStyle('today')} onClick={() => onFilterChange('today')}>今日</li>
-        <li style={getListStyle('week')} onClick={() => onFilterChange('week')}>今週</li>
-        <li style={getListStyle('month')} onClick={() => onFilterChange('month')}>今月</li>
+    <div className="w-[200px] p-5 border-r border-gray-300 bg-gray-50">
+      <h2 className="text-lg font-bold mb-4">期間で絞り込み</h2>
+      <ul className="list-none p-0 mb-8">
+        <li className={getListClass('all')} onClick={() => onFilterChange('all')}>すべて</li>
+        <li className={getListClass('today')} onClick={() => onFilterChange('today')}>今日</li>
+        <li className={getListClass('week')} onClick={() => onFilterChange('week')}>今週</li>
+        <li className={getListClass('month')} onClick={() => onFilterChange('month')}>今月</li>
       </ul>
 
-      <h2 style={{ fontSize: '18px', marginBottom: '15px' }}>カテゴリ</h2>
+      <h2 className="text-lg font-bold mb-4">カテゴリ</h2>
       
       {/* ★ プルダウンと削除ボタンを横並びにする */}
-      <div style={{ display: 'flex', gap: '5px', marginBottom: '15px' }}>
+      <div className="flex gap-1.5 mb-4">
         <select
           value={currentCategory}
           onChange={(e) => onCategoryChange(e.target.value)}
-          style={{ flex: 1, padding: '8px', borderRadius: '4px', border: '1px solid #ccc', cursor: 'pointer' }}
+          className="flex-1 p-2 rounded border border-gray-300 cursor-pointer focus:outline-none focus:border-blue-500"
         >
           <option value="all">すべてのカテゴリ</option>
           {categories.map((c) => (
@@ -63,7 +66,7 @@ export const Sidebar = ({ currentFilter, onFilterChange, currentCategory, onCate
         {currentCategory !== 'all' && currentCategory !== '未設定' && (
           <button
             onClick={() => onDeleteCategory(currentCategory)}
-            style={{ padding: '8px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+            className="p-2 bg-red-500 text-white border-none rounded cursor-pointer hover:bg-red-600 transition-colors"
             title="このカテゴリを削除"
           >
             🗑
@@ -72,17 +75,17 @@ export const Sidebar = ({ currentFilter, onFilterChange, currentCategory, onCate
       </div>
 
       {/* ★ 新しいカテゴリを追加するための入力欄とボタン */}
-      <div style={{ display: 'flex', gap: '5px' }}>
+      <div className="flex gap-1.5">
         <input
           type="text"
           placeholder="新しいカテゴリ"
           value={newCategoryName}
           onChange={(e) => setNewCategoryName(e.target.value)}
-          style={{ flex: 1, padding: '6px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '12px', minWidth: '0' }}
+          className="flex-1 p-1.5 rounded border border-gray-300 text-xs min-w-0 focus:outline-none focus:border-blue-500"
         />
         <button
           onClick={handleAddCategory}
-          style={{ padding: '6px 10px', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', whiteSpace: 'nowrap' }}
+          className="px-2.5 py-1.5 bg-emerald-500 text-white border-none rounded cursor-pointer text-xs whitespace-nowrap hover:bg-emerald-600 transition-colors"
         >
           追加
         </button>
