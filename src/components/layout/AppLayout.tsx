@@ -1,7 +1,7 @@
 import { Sidebar } from './Sidebar';
 import type { FilterType } from '../../types';
 
-// ★ 親から受け取るルールを追加
+//親から受け取るルールを追加
 type Props = {
   children: React.ReactNode;
   currentFilter: FilterType;
@@ -15,8 +15,8 @@ type Props = {
 
 export const AppLayout = ({ children, currentFilter, onFilterChange, currentCategory, onCategoryChange, categories, onAddCategory, onDeleteCategory }: Props) => {
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
-      {/* ★ Sidebar へ横流しする */}
+    // ★ style を完全に削除し、すべて className に置き換えました
+    <div className="flex min-h-screen bg-gray-100">
       <Sidebar 
         currentFilter={currentFilter} 
         onFilterChange={onFilterChange}
@@ -26,8 +26,7 @@ export const AppLayout = ({ children, currentFilter, onFilterChange, currentCate
         onAddCategory={onAddCategory}
         onDeleteCategory={onDeleteCategory}
       />
-      
-      <main style={{ flex: 1, padding: '20px', backgroundColor: '#f3f4f6' }}>
+      <main className="flex-1 p-5">
         {children}
       </main>
     </div>
