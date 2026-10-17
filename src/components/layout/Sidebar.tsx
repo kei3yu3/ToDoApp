@@ -10,23 +10,25 @@ type Props = {
   categories: string[];
   onAddCategory: (category: string) => void;
   onDeleteCategory: (category: string) => void;
+  isOpen?: boolean; 
+  onClose?: () => void;
 };
 
-export const Sidebar = ({ currentFilter, onFilterChange, currentCategory, onCategoryChange, categories, onAddCategory, onDeleteCategory }: Props) => {
+export const Sidebar = ({ currentFilter, onFilterChange, currentCategory, onCategoryChange, categories, onAddCategory, onDeleteCategory, isOpen = false, onClose}: Props) => {
   // ★ 新しいカテゴリの名前を入力するためのState
   const [newCategoryName, setNewCategoryName] = useState('');
 
   // メニューの見た目を決める設定（選ばれているものは青色＋太字にする）
   const getListClass = (filter: FilterType) => {
     // 共通のクラス（余白、角丸、カーソル、色の変化アニメーション）
-    const baseClass = "p-2.5 rounded cursor-pointer mb-1 transition-colors";
+    const baseClass = "p-2.5 rounded cursor-pointer mb-2 transition-all font-medium";
     
     if (currentFilter === filter) {
       // 選ばれている時のクラス
-      return `${baseClass} bg-sky-100 text-sky-600 font-bold`;
+      return `${baseClass} bg-blue-500/80 text-white shadow-md backdrop-blur-sm`;
     } else {
       // 選ばれていない時（マウスを乗せると薄いグレーになる）
-      return `${baseClass} text-gray-800 hover:bg-gray-200`;
+      return `${baseClass} text-gray-700 hover:bg-white/60 hover:shadow-sm`;
     }
   };
 
@@ -37,59 +39,86 @@ export const Sidebar = ({ currentFilter, onFilterChange, currentCategory, onCate
     setNewCategoryName(''); // 入力欄を空に戻す
   };
 
+  // ★ スマホ時：メニュー外をタップした時の暗い背景（オーバーレイ）
+  const overlayClass = isOpen 
+    ? "fixed inset-0 bg-black/20 backdrop-blur-sm z-30 md:hidden transition-opacity" 
+    : "hidden";
+
+  // ★ サイドバー本体：スマホ時はスライド、PC時は左に固定
+  const sidebarClass = `
+    fixed inset-y-0 left-0 z-40 w-64 transform transition-transform duration-300 ease-in-out
+    md:relative md:translate-x-0
+    p-6
+    bg-white/40 backdrop-blur-xl border-r border-white/60 shadow-2xl md:shadow-none
+    ${isOpen ? "translate-x-0" : "-translate-x-full"}
+  `;
+
   return (
-    <div className="w-[200px] p-5 border-r border-gray-300 bg-gray-50">
-      <h2 className="text-lg font-bold mb-4">期間で絞り込み</h2>
-      <ul className="list-none p-0 mb-8">
-        <li className={getListClass('all')} onClick={() => onFilterChange('all')}>すべて</li>
-        <li className={getListClass('today')} onClick={() => onFilterChange('today')}>今日</li>
-        <li className={getListClass('week')} onClick={() => onFilterChange('week')}>今週</li>
-        <li className={getListClass('month')} onClick={() => onFilterChange('month')}>今月</li>
-      </ul>
+    <>
+      <div className={overlayClass} onClick={onClose} />
 
-      <h2 className="text-lg font-bold mb-4">カテゴリ</h2>
-      
-      {/* ★ プルダウンと削除ボタンを横並びにする */}
-      <div className="flex gap-1.5 mb-4">
-        <select
-          value={currentCategory}
-          onChange={(e) => onCategoryChange(e.target.value)}
-          className="flex-1 p-2 rounded border border-gray-300 cursor-pointer focus:outline-none focus:border-blue-500"
-        >
-          <option value="all">すべてのカテゴリ</option>
-          {categories.map((c) => (
-            <option key={c} value={c}>{c}</option>
-          ))}
-        </select>
-
-        {/* ★ 「すべて」と「未設定」以外の時だけ、削除ボタンを表示する */}
-        {currentCategory !== 'all' && currentCategory !== '未設定' && (
-          <button
-            onClick={() => onDeleteCategory(currentCategory)}
-            className="p-2 bg-red-500 text-white border-none rounded cursor-pointer hover:bg-red-600 transition-colors"
-            title="このカテゴリを削除"
+      <div className={sidebarClass}>
+        {/* スマホ時のみ表示する「閉じる」ボタンとメニュータイトル */}
+        <div className="flex justify-between items-center mb-8 md:mb-4">
+          <h2 className="text-xl font-bold text-gray-800 md:hidden">メニュー</h2>
+          <h2 className="hidden md:block text-lg font-bold text-gray-800">期間で絞り込み</h2>
+          <button 
+            onClick={onClose} 
+            className="md:hidden p-2 text-gray-500 hover:text-gray-800 hover:bg-white/60 rounded-full transition-colors"
           >
-            🗑
+            ✕
           </button>
-        )}
-      </div>
+        </div>
 
-      {/* ★ 新しいカテゴリを追加するための入力欄とボタン */}
-      <div className="flex gap-1.5">
-        <input
-          type="text"
-          placeholder="新しいカテゴリ"
-          value={newCategoryName}
-          onChange={(e) => setNewCategoryName(e.target.value)}
-          className="flex-1 p-1.5 rounded border border-gray-300 text-xs min-w-0 focus:outline-none focus:border-blue-500"
-        />
-        <button
-          onClick={handleAddCategory}
-          className="px-2.5 py-1.5 bg-emerald-500 text-white border-none rounded cursor-pointer text-xs whitespace-nowrap hover:bg-emerald-600 transition-colors"
-        >
-          追加
-        </button>
+        <ul className="list-none p-0 mb-8">
+          {/* ★ リンクを押した時にスマホメニューを自動で閉じるように onClose?.() を追加 */}
+          <li className={getListClass('all')} onClick={() => { onFilterChange('all'); onClose?.(); }}>すべて</li>
+          <li className={getListClass('today')} onClick={() => { onFilterChange('today'); onClose?.(); }}>今日</li>
+          <li className={getListClass('week')} onClick={() => { onFilterChange('week'); onClose?.(); }}>今週</li>
+          <li className={getListClass('month')} onClick={() => { onFilterChange('month'); onClose?.(); }}>今月</li>
+        </ul>
+
+        <h2 className="text-lg font-bold mb-4 text-gray-800">カテゴリ</h2>
+        
+        <div className="flex gap-1.5 mb-4">
+          <select
+            value={currentCategory}
+            onChange={(e) => { onCategoryChange(e.target.value); onClose?.(); }}
+            className="flex-1 p-2 bg-white/60 border border-white/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300/50 cursor-pointer text-gray-700"
+          >
+            <option value="all">すべてのカテゴリ</option>
+            {categories.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+
+          {currentCategory !== 'all' && currentCategory !== '未設定' && (
+            <button
+              onClick={() => onDeleteCategory(currentCategory)}
+              className="px-3 bg-red-500/80 text-white rounded-xl shadow-sm hover:bg-red-600 transition-colors"
+              title="このカテゴリを削除"
+            >
+              🗑
+            </button>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <input
+            type="text"
+            placeholder="新しいカテゴリ"
+            value={newCategoryName}
+            onChange={(e) => setNewCategoryName(e.target.value)}
+            className="w-full p-2 bg-white/60 border border-white/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300/50 text-sm"
+          />
+          <button
+            onClick={handleAddCategory}
+            className="w-full py-2 bg-emerald-500/90 text-white font-bold rounded-xl shadow-md hover:bg-emerald-600 transition-colors"
+          >
+            追加
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
