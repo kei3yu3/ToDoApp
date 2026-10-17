@@ -16,7 +16,7 @@ type Props = {
 export const AppLayout = ({ children, currentFilter, onFilterChange, currentCategory, onCategoryChange, categories, onAddCategory, onDeleteCategory }: Props) => {
   return (
     // ★ style を完全に削除し、すべて className に置き換えました
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100">
       <Sidebar 
         currentFilter={currentFilter} 
         onFilterChange={onFilterChange}

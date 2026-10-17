@@ -1,55 +1,48 @@
 import { useState } from 'react';
 
-// 親から受け取る関数のルール
 type Props = {
   onAddTask: (title: string, dueDate: string, category: string) => void;
   categories: string[];
 };
 
 export const TaskForm = ({ onAddTask, categories }: Props) => {
-  // 入力欄の文字を記憶するためのState
   const [title, setTitle] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [category, setCategory] = useState(categories[0] || '未設定');
 
-  // 追加ボタンが押された時の処理
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault(); // 画面がリロードされるのを防ぐ
-    
-    if (!title) return; // タイトルが空っぽなら追加しない
-
-    // ★ 親から渡された追加機能を実行！
+    e.preventDefault();
+    if (!title) return;
     onAddTask(title, dueDate, category);
-
-    // 追加した後は、入力欄を空に戻す
     setTitle('');
     setDueDate('');
-    setCategory('開発'); // 追加後は初期値に戻す
+    setCategory('開発');
   };
 
   return (
     <form 
       onSubmit={handleSubmit}
-      style={{ marginBottom: '20px', padding: '15px', backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
+      // ★ グラスモーフィズムのコンテナ設定（半透明の白、すりガラス、大きな丸み、白いフチ、柔らかい影）
+      className="mb-5 p-5 bg-white/40 backdrop-blur-md border border-white/60 shadow-xl rounded-2xl flex flex-wrap gap-3 items-center"
     >
       <input 
         type="text" 
         placeholder="＋ タスク名を入力..." 
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        style={{ padding: '8px', width: '60%', marginRight: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+        // ★ 入力欄も少し透けさせ、丸みを強くする（rounded-xl）
+        className="flex-1 min-w-[200px] p-2.5 bg-white/60 border border-white/50 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-300/50 transition-all text-gray-800 placeholder-gray-500"
       />
       <input 
         type="date" 
         value={dueDate}
         onChange={(e) => setDueDate(e.target.value)}
-        style={{ padding: '8px', marginRight: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+        className="p-2.5 bg-white/60 border border-white/50 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-300/50 transition-all text-gray-700"
       />
-      {/* ★ カテゴリを選ぶプルダウンを追加 */}
       <select
         value={category}
         onChange={(e) => setCategory(e.target.value)}
-        style={{ padding: '8px', marginRight: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+        className="p-2.5 bg-white/60 border border-white/50 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-300/50 transition-all cursor-pointer text-gray-700"
       >
         {categories.map((c) => (
           <option key={c} value={c}>{c}</option>
@@ -57,7 +50,8 @@ export const TaskForm = ({ onAddTask, categories }: Props) => {
       </select>
       <button 
         type="submit"
-        style={{ padding: '8px 16px', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+        // ★ ボタンはAppleらしく、完全に丸いカプセル型（rounded-full）にし、少し立体感を出す
+        className="px-6 py-2.5 bg-blue-500/90 text-white font-bold rounded-full shadow-md hover:bg-blue-600 hover:shadow-lg transition-all cursor-pointer whitespace-nowrap"
       >
         追加
       </button>

@@ -193,7 +193,7 @@ function App() {
       onAddCategory={addCategory}
       onDeleteCategory={deleteCategory}
     >
-      <h1 style={{ fontSize: '24px', marginBottom: '20px' }}>{getPageTitle()}</h1>
+      <h1 className="text-2xl font-bold text-gray-800 mb-5">{getPageTitle()}</h1>
       <TaskForm onAddTask={addTask} categories={categories}/>
       <TaskList tasks={filteredTasks} onDeleteTask={deleteTask} onToggleTaskDone={toggleTaskDone} onEditTask={editTask} />
     </AppLayout>

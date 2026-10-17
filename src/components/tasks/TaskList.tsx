@@ -10,8 +10,18 @@ type Props = {
 };
 
 export const TaskList = ({ tasks, onDeleteTask, onToggleTaskDone, onEditTask }: Props) => {
+  // ★ タスクが1つもない時の表示（これもグラスモーフィズム化）
+  if (tasks.length === 0) {
+    return (
+      <div className="p-8 text-center text-gray-500 bg-white/40 backdrop-blur-md border border-white/60 shadow-sm rounded-2xl">
+        タスクがありません。上のフォームから追加してみましょう！
+      </div>
+    );
+  }
+
   return (
-    <div style={{ backgroundColor: '#fff', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', overflow: 'hidden' }}>
+    // ★ 白い背景を消して、TaskItemを縦に並べるだけの透明なコンテナに変更
+    <div className="flex flex-col">
       {tasks.map((task) => (
         // ★ TaskItemへ編集機能をさらに渡す
         <TaskItem 
