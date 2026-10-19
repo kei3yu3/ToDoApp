@@ -44,14 +44,21 @@ export const Sidebar = ({ currentFilter, onFilterChange, currentCategory, onCate
     ? "fixed inset-0 bg-black/20 backdrop-blur-sm z-30 md:hidden transition-opacity" 
     : "hidden";
 
-  // ★ サイドバー本体：スマホ時はスライド、PC時は左に固定
+  // ★ サイドバー本体：PCでもスマホでも、isOpen に応じてスライド開閉するように変更
   const sidebarClass = `
     fixed inset-y-0 left-0 z-40 w-64 transform transition-transform duration-300 ease-in-out
-    md:relative md:translate-x-0
-    p-6
-    bg-white/40 backdrop-blur-xl border-r border-white/60 shadow-2xl md:shadow-none
+    px-6 pd-6 pt-20
+    bg-white/40 backdrop-blur-xl border-r border-white/60 shadow-xl
     ${isOpen ? "translate-x-0" : "-translate-x-full"}
   `;
+
+  // スマホ画面（横幅768px未満）の時だけ、項目を選んだら自動でメニューを閉じる
+  const handleSelectFilter = (filter: FilterType) => {
+    onFilterChange(filter);
+    if (window.innerWidth < 768) {
+      onClose?.();
+    }
+  };
 
   return (
     <>
@@ -72,10 +79,10 @@ export const Sidebar = ({ currentFilter, onFilterChange, currentCategory, onCate
 
         <ul className="list-none p-0 mb-8">
           {/* ★ リンクを押した時にスマホメニューを自動で閉じるように onClose?.() を追加 */}
-          <li className={getListClass('all')} onClick={() => { onFilterChange('all'); onClose?.(); }}>すべて</li>
-          <li className={getListClass('today')} onClick={() => { onFilterChange('today'); onClose?.(); }}>今日</li>
-          <li className={getListClass('week')} onClick={() => { onFilterChange('week'); onClose?.(); }}>今週</li>
-          <li className={getListClass('month')} onClick={() => { onFilterChange('month'); onClose?.(); }}>今月</li>
+          <li className={getListClass('all')} onClick={() => handleSelectFilter('all')}>すべて</li>
+          <li className={getListClass('today')} onClick={() => handleSelectFilter('today')}>今日</li>
+          <li className={getListClass('week')} onClick={() => handleSelectFilter('week')}>今週</li>
+          <li className={getListClass('month')} onClick={() => handleSelectFilter('month')}>今月</li>
         </ul>
 
         <h2 className="text-lg font-bold mb-4 text-gray-800">カテゴリ</h2>
