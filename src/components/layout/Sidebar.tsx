@@ -48,7 +48,7 @@ export const Sidebar = ({ currentFilter, onFilterChange, currentCategory, onCate
   const sidebarClass = `
     fixed inset-y-0 left-0 z-40 w-64 transform transition-transform duration-300 ease-in-out
     px-6 pd-6 pt-20
-    bg-white/40 backdrop-blur-xl border-r border-white/60 shadow-xl
+    bg-white/20 backdrop-blur-xl border-r border-white/50 shadow-xl rounded-r-3xl
     ${isOpen ? "translate-x-0" : "-translate-x-full"}
   `;
 
