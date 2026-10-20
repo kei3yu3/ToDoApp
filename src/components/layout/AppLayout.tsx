@@ -48,7 +48,7 @@ export const AppLayout = ({ children, currentFilter, onFilterChange, currentCate
       
       {/* ★ メインコンテンツ：サイドバーの開閉に合わせて左の余白(md:ml-64)が滑らかに変化する */}
       <main 
-        className={`flex-1 p-5 pt-20 md:p-8 md:pt-16 transition-all duration-300 ease-in-out ${
+        className={`flex-1 p-5 pt-20 md:p-8 md:pt-8 transition-all duration-300 ease-in-out ${
           isSidebarOpen ? 'md:ml-64' : 'md:ml-0'
         }`}
       >

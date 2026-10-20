@@ -46,10 +46,10 @@ export const Sidebar = ({ currentFilter, onFilterChange, currentCategory, onCate
 
   // ★ サイドバー本体：PCでもスマホでも、isOpen に応じてスライド開閉するように変更
   const sidebarClass = `
-    fixed inset-y-0 left-0 z-40 w-64 transform transition-transform duration-300 ease-in-out
+    fixed top-4 bottom-4 z-40 w-64 transform transition-transform duration-300 ease-in-out
     px-6 pd-6 pt-20
-    bg-white/25 backdrop-blur-xl border-r border-white/50 shadow-xl rounded-r-3xl
-    ${isOpen ? "translate-x-0" : "-translate-x-full"}
+    bg-white/25 backdrop-blur-md border border-white/60 shadow-2xl rounded-r-3xl
+    ${isOpen ? "translate-x-0" : "-translate-x-[120%]"}
   `;
 
   // スマホ画面（横幅768px未満）の時だけ、項目を選んだら自動でメニューを閉じる
