@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { FilterType } from '../../types';
+import type { FilterType, SortOrder } from '../../types';
 
 // ★ 親から「現在のモード」と「切り替える機能」を受け取る
 type Props = {
@@ -10,11 +10,13 @@ type Props = {
   categories: string[];
   onAddCategory: (category: string) => void;
   onDeleteCategory: (category: string) => void;
+  currentSort: SortOrder;
+  onSortChange: (sort: SortOrder) => void;
   isOpen?: boolean; 
   onClose?: () => void;
 };
 
-export const Sidebar = ({ currentFilter, onFilterChange, currentCategory, onCategoryChange, categories, onAddCategory, onDeleteCategory, isOpen = false, onClose}: Props) => {
+export const Sidebar = ({ currentFilter, onFilterChange, currentCategory, onCategoryChange, categories, onAddCategory, onDeleteCategory, currentSort, onSortChange, isOpen = false, onClose}: Props) => {
   // ★ 新しいカテゴリの名前を入力するためのState
   const [newCategoryName, setNewCategoryName] = useState('');
 
@@ -29,6 +31,16 @@ export const Sidebar = ({ currentFilter, onFilterChange, currentCategory, onCate
     } else {
       // 選ばれていない時（マウスを乗せると薄いグレーになる）
       return `${baseClass} text-gray-700 hover:bg-white/60 hover:shadow-sm`;
+    }
+  };
+
+  // ★ 並び替えボタン用のデザインクラス
+  const getSortButtonClass = (sort: SortOrder) => {
+    const baseClass = "flex-1 py-2 px-3 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-1 cursor-pointer";
+    if (currentSort === sort) {
+      return `${baseClass} bg-blue-500/80 text-white shadow-md backdrop-blur-sm`;
+    } else {
+      return `${baseClass} bg-white/40 text-gray-700 hover:bg-white/60 border border-white/50`;
     }
   };
 
@@ -85,8 +97,33 @@ export const Sidebar = ({ currentFilter, onFilterChange, currentCategory, onCate
           <li className={getListClass('month')} onClick={() => handleSelectFilter('month')}>今月</li>
         </ul>
 
+        <h2 className="text-lg font-bold mb-3 text-gray-800">期限で並び替え</h2>
+        <div className="flex gap-2 mb-6">
+          <button
+            onClick={() => onSortChange('asc')}
+            className={getSortButtonClass('asc')}
+            title="期限が近い順に並べる"
+          >
+            {/* 上向き矢印のSVG */}
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+            </svg>
+            昇順
+          </button>
+          <button
+            onClick={() => onSortChange('desc')}
+            className={getSortButtonClass('desc')}
+            title="期限が遠い順に並べる"
+          >
+            {/* 下向き矢印のSVG */}
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+            降順
+          </button>
+        </div>
+
         <h2 className="text-lg font-bold mb-4 text-gray-800">カテゴリ</h2>
-        
         <div className="flex gap-1.5 mb-4">
           <select
             value={currentCategory}
