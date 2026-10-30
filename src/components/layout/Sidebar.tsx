@@ -58,9 +58,10 @@ export const Sidebar = ({ currentFilter, onFilterChange, currentCategory, onCate
 
   // ★ サイドバー本体：PCでもスマホでも、isOpen に応じてスライド開閉するように変更
   const sidebarClass = `
-    fixed top-4 bottom-4 left-0 z-40 w-64 transform transition-transform duration-300 ease-in-out
-    pt-16
-    bg-white/25 backdrop-blur-md border border-white/60 shadow-2xl rounded-r-3xl
+    fixed top-4 left-0 z-40 w-64 h-[calc(100vh-2rem)] transform transition-transform duration-300 ease-in-out
+    px-6 pb-8 pt-16
+    bg-white/25 backdrop-blur-md border-y border-r border-white/60 shadow-2xl rounded-r-3xl
+    overflow-y-auto
     ${isOpen ? "translate-x-0" : "-translate-x-full"}
   `;
 
