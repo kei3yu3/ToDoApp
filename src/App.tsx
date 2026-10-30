@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { AppLayout } from './components/layout/AppLayout';
 import { TaskForm } from './components/tasks/TaskForm';
 import { TaskList } from './components/tasks/TaskList';
-import type { Task, FilterType } from './types';
+import type { Task, FilterType, SortOrder } from './types';
 
 // ★ 保存する時の「データの名前（合言葉）」を決めておく
 const STORAGE_KEY = 'todo_app_tasks_v2';
@@ -26,6 +26,8 @@ function App() {
   const [filter, setFilter] = useState<FilterType>('all');
   // 現在選ばれているカテゴリ（初期値は 'all'）
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  // ★ 並び替えの順序（初期値は 'asc' = 期限が近い順）
+  const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
 
   // ★ カテゴリのリスト
   const [categories, setCategories] = useState<string[]>(() => {
@@ -144,11 +146,19 @@ function App() {
 
     // 2. 絞り込んだ結果を sort で並び替えてから返す
     return filtered.sort((a, b) => {
+      // ① 完了・未完了での並び替え（未完了を上に、完了済みを下に）
       if (a.isDone !== b.isDone) {
         return a.isDone ? 1 : -1;
       }
-      if (a.dueDate < b.dueDate) return -1;
-      if (a.dueDate > b.dueDate) return 1;
+
+      // ★ 期限が未設定（空っぽ）のタスクは常に後ろに回す
+      if (!a.dueDate && b.dueDate) return 1;
+      if (a.dueDate && !b.dueDate) return -1;
+
+      // ② 期限の並び替え（'asc' なら近い順、'desc' なら遠い順）
+      if (a.dueDate < b.dueDate) return sortOrder === 'asc' ? -1 : 1;
+      if (a.dueDate > b.dueDate) return sortOrder === 'asc' ? 1 : -1;
+
       return 0;
     });
   };
@@ -172,6 +182,8 @@ function App() {
       categories={categories}
       onAddCategory={addCategory}
       onDeleteCategory={deleteCategory}
+      currentSort={sortOrder}
+      onSortChange={setSortOrder}
     >
       {/* ★ メイン領域全体を包む大きなすりガラスのボード */}
       <div className="p-6 md:p-8 bg-white/30 backdrop-blur-lg border border-white/60 rounded-3xl shadow-xl">

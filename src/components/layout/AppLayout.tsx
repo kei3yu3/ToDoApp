@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Sidebar } from './Sidebar';
-import type { FilterType } from '../../types';
+import type { FilterType, SortOrder } from '../../types';
 
 //親から受け取るルールを追加
 type Props = {
@@ -12,9 +12,11 @@ type Props = {
   categories: string[];
   onAddCategory: (category: string) => void;
   onDeleteCategory: (category: string) => void;
+  currentSort: SortOrder;
+  onSortChange: (sort: SortOrder) => void;
 };
 
-export const AppLayout = ({ children, currentFilter, onFilterChange, currentCategory, onCategoryChange, categories, onAddCategory, onDeleteCategory }: Props) => {
+export const AppLayout = ({ children, currentFilter, onFilterChange, currentCategory, onCategoryChange, categories, onAddCategory, onDeleteCategory, currentSort, onSortChange }: Props) => {
   // ★ PCで開いた時に最初から表示されるよう、初期値を true に設定
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
@@ -41,7 +43,8 @@ export const AppLayout = ({ children, currentFilter, onFilterChange, currentCate
         categories={categories}
         onAddCategory={onAddCategory}
         onDeleteCategory={onDeleteCategory}
-        // ★ 開閉状態と、閉じるための関数をSidebarに渡す
+        currentSort={currentSort}
+        onSortChange={onSortChange}
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
       />
