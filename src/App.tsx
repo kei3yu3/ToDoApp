@@ -18,9 +18,7 @@ function App() {
     }
     // なければ、とりあえず最初の3件を入れる
     return [
-      { id: 1, title: 'Reactのコンポーネント分割', isDone: false, dueDate: '2026-10-12', category: '未設定' },
-      { id: 2, title: '画面設計の復習', isDone: true, dueDate: '2026-10-12', category: '未設定' },
-      { id: 3, title: 'ギターのトラスロッド調整', isDone: false, dueDate: '2026-10-15', category: '未設定' },
+      { id: 1, title: 'タスクの入力', isDone: false, dueDate: '2026-10-12', category: '未設定' },
     ];
   });
 
