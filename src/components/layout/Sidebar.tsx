@@ -23,7 +23,7 @@ export const Sidebar = ({ currentFilter, onFilterChange, currentCategory, onCate
   // メニューの見た目を決める設定（選ばれているものは青色＋太字にする）
   const getListClass = (filter: FilterType) => {
     // 共通のクラス（余白、角丸、カーソル、色の変化アニメーション）
-    const baseClass = "p-2.5 rounded cursor-pointer mb-2 transition-all font-medium";
+    const baseClass = "px-3 py-2 rounded-xl cursor-pointer mb-1.5 transition-all font-medium text-sm";
     
     if (currentFilter === filter) {
       // 選ばれている時のクラス
@@ -36,7 +36,7 @@ export const Sidebar = ({ currentFilter, onFilterChange, currentCategory, onCate
 
   // ★ 並び替えボタン用のデザインクラス
   const getSortButtonClass = (sort: SortOrder) => {
-    const baseClass = "flex-1 py-2 px-3 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-1 cursor-pointer";
+    const baseClass = "flex-1 py-1.5 px-3 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-1 cursor-pointer";
     if (currentSort === sort) {
       return `${baseClass} bg-blue-500/80 text-white shadow-md backdrop-blur-sm`;
     } else {
@@ -58,10 +58,10 @@ export const Sidebar = ({ currentFilter, onFilterChange, currentCategory, onCate
 
   // ★ サイドバー本体：PCでもスマホでも、isOpen に応じてスライド開閉するように変更
   const sidebarClass = `
-    fixed top-4 bottom-4 z-40 w-64 transform transition-transform duration-300 ease-in-out
-    px-6 pd-6 pt-20
+    fixed top-4 bottom-4 left-0 z-40 w-64 transform transition-transform duration-300 ease-in-out
+    pt-16
     bg-white/25 backdrop-blur-md border border-white/60 shadow-2xl rounded-r-3xl
-    ${isOpen ? "translate-x-0" : "-translate-x-[120%]"}
+    ${isOpen ? "translate-x-0" : "-translate-x-full"}
   `;
 
   // スマホ画面（横幅768px未満）の時だけ、項目を選んだら自動でメニューを閉じる
@@ -77,94 +77,83 @@ export const Sidebar = ({ currentFilter, onFilterChange, currentCategory, onCate
       <div className={overlayClass} onClick={onClose} />
 
       <div className={sidebarClass}>
-        {/* スマホ時のみ表示する「閉じる」ボタンとメニュータイトル */}
-        <div className="flex justify-between items-center mb-8 md:mb-4">
-          <h2 className="text-xl font-bold text-gray-800 md:hidden">メニュー</h2>
-          <h2 className="hidden md:block text-lg font-bold text-gray-800">期間で絞り込み</h2>
-          <button 
-            onClick={onClose} 
-            className="md:hidden p-2 text-gray-500 hover:text-gray-800 hover:bg-white/60 rounded-full transition-colors"
-          >
-            ✕
-          </button>
-        </div>
+        {/* ★ ハンバーガーボタンの下の領域だけをスクロール可能にするコンテナ */}
+        <div className="flex-1 overflow-y-auto px-6 pb-6">
+          <h2 className="text-base font-bold mb-2 text-gray-800">期間で絞り込み</h2>
 
-        <ul className="list-none p-0 mb-8">
-          {/* ★ リンクを押した時にスマホメニューを自動で閉じるように onClose?.() を追加 */}
-          <li className={getListClass('all')} onClick={() => handleSelectFilter('all')}>すべて</li>
-          <li className={getListClass('today')} onClick={() => handleSelectFilter('today')}>今日</li>
-          <li className={getListClass('week')} onClick={() => handleSelectFilter('week')}>今週</li>
-          <li className={getListClass('month')} onClick={() => handleSelectFilter('month')}>今月</li>
-        </ul>
+          <ul className="list-none p-0 mb-5">
+            <li className={getListClass('all')} onClick={() => handleSelectFilter('all')}>すべて</li>
+            <li className={getListClass('today')} onClick={() => handleSelectFilter('today')}>今日</li>
+            <li className={getListClass('week')} onClick={() => handleSelectFilter('week')}>今週</li>
+            <li className={getListClass('month')} onClick={() => handleSelectFilter('month')}>今月</li>
+          </ul>
 
-        <h2 className="text-lg font-bold mb-3 text-gray-800">期限で並び替え</h2>
-        <div className="flex gap-2 mb-6">
-          <button
-            onClick={() => onSortChange('asc')}
-            className={getSortButtonClass('asc')}
-            title="期限が近い順に並べる"
-          >
-            {/* 上向き矢印のSVG */}
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-            </svg>
-            昇順
-          </button>
-          <button
-            onClick={() => onSortChange('desc')}
-            className={getSortButtonClass('desc')}
-            title="期限が遠い順に並べる"
-          >
-            {/* 下向き矢印のSVG */}
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-            降順
-          </button>
-        </div>
-
-        <h2 className="text-lg font-bold mb-4 text-gray-800">カテゴリ</h2>
-        <div className="flex gap-1.5 mb-4">
-          <select
-            value={currentCategory}
-            // ★ カテゴリ変更時はサイドバーを閉じないように修正
-            onChange={(e) => onCategoryChange(e.target.value)}
-            className="flex-1 p-2 bg-white/60 border border-white/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300/50 cursor-pointer text-gray-700"
-          >
-            <option value="all">すべてのカテゴリ</option>
-            {categories.map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
-
-          {currentCategory !== 'all' && currentCategory !== '未設定' && (
+          <h2 className="text-base font-bold mb-2 text-gray-800">期限で並び替え</h2>
+          <div className="flex gap-2 mb-5">
             <button
-              onClick={() => onDeleteCategory(currentCategory)}
-              className="px-3 bg-red-500/80 text-white rounded-xl shadow-sm hover:bg-red-600 transition-colors"
-              title="このカテゴリを削除"
+              onClick={() => onSortChange('asc')}
+              className={getSortButtonClass('asc')}
+              title="期限が近い順に並べる"
             >
-              {/* ★ カテゴリ削除ボタンもゴミ箱のSVGアイコンに変更 */}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
               </svg>
+              昇順
             </button>
-          )}
-        </div>
+            <button
+              onClick={() => onSortChange('desc')}
+              className={getSortButtonClass('desc')}
+              title="期限が遠い順に並べる"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+              降順
+            </button>
+          </div>
 
-        <div className="flex flex-col gap-2">
-          <input
-            type="text"
-            placeholder="新しいカテゴリ"
-            value={newCategoryName}
-            onChange={(e) => setNewCategoryName(e.target.value)}
-            className="w-full p-2 bg-white/60 border border-white/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300/50 text-sm"
-          />
-          <button
-            onClick={handleAddCategory}
-            className="w-full py-2 bg-emerald-500/90 text-white font-bold rounded-xl shadow-md hover:bg-emerald-600 transition-colors"
-          >
-            追加
-          </button>
+          <h2 className="text-base font-bold mb-2 text-gray-800">カテゴリ</h2>
+          
+          <div className="flex gap-1.5 mb-3">
+            <select
+              value={currentCategory}
+              onChange={(e) => onCategoryChange(e.target.value)}
+              className="flex-1 p-2 bg-white/60 border border-white/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300/50 cursor-pointer text-gray-700 text-sm"
+            >
+              <option value="all">すべてのカテゴリ</option>
+              {categories.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+
+            {currentCategory !== 'all' && currentCategory !== '未設定' && (
+              <button
+                onClick={() => onDeleteCategory(currentCategory)}
+                className="p-2 bg-red-500/80 text-white rounded-xl shadow-sm hover:bg-red-600 transition-colors cursor-pointer flex items-center justify-center"
+                title="このカテゴリを削除"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <input
+              type="text"
+              placeholder="新しいカテゴリ"
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
+              className="w-full p-2 bg-white/60 border border-white/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300/50 text-sm"
+            />
+            <button
+              onClick={handleAddCategory}
+              className="w-full py-2 bg-emerald-500/90 text-white font-bold rounded-xl shadow-md hover:bg-emerald-600 transition-colors cursor-pointer text-sm"
+            >
+              追加
+            </button>
+          </div>
         </div>
       </div>
     </>
