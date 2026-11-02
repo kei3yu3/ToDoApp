@@ -1,60 +1,70 @@
 import { useState } from 'react';
 
+// App.tsxから受け取るタスク追加関数とカテゴリ一覧の型定義
 type Props = {
   onAddTask: (title: string, dueDate: string, category: string) => void;
   categories: string[];
 };
 
 export const TaskForm = ({ onAddTask, categories }: Props) => {
+  // フォームの入力値（タスク名・期限・カテゴリ）を管理するState
   const [title, setTitle] = useState('');
   const [dueDate, setDueDate] = useState('');
-  const [category, setCategory] = useState(categories[0] || '未設定');
+  const [category, setCategory] = useState('未設定');
 
+  // フォーム送信時にタスクを追加し、入力欄をリセットする処理
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title) return;
+    if (!title.trim()) return;
     onAddTask(title, dueDate, category);
     setTitle('');
     setDueDate('');
-    setCategory('開発');
   };
 
   return (
+    // タスク入力フォーム全体（スマホでは2段、PCでは横1列に統合されたバー）
     <form 
-      onSubmit={handleSubmit}
-      // ★ グラスモーフィズムのコンテナ設定（半透明の白、すりガラス、大きな丸み、白いフチ、柔らかい影）
-      className="mb-5 p-5 bg-white/40 backdrop-blur-md border border-white/60 shadow-xl rounded-2xl flex flex-wrap gap-3 items-center"
+      onSubmit={handleSubmit} 
+      className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 p-2 mb-5 bg-zinc-50/80 border border-zinc-200/80 rounded-xl focus-within:bg-white focus-within:border-zinc-300 focus-within:ring-2 focus-within:ring-zinc-900/5 transition-all"
     >
-      <input 
-        type="text" 
-        placeholder="＋ タスク名を入力..." 
+      {/* タスク名のテキスト入力欄 */}
+      <input
+        type="text"
+        placeholder="新しいタスクを入力..."
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        // ★ 入力欄も少し透けさせ、丸みを強くする（rounded-xl）
-        className="flex-1 min-w-[200px] p-2.5 bg-white/60 border border-white/50 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-300/50 transition-all text-gray-800 placeholder-gray-500"
+        className="flex-1 px-2.5 py-1.5 bg-transparent text-sm text-zinc-800 placeholder:text-zinc-400 focus:outline-none"
       />
-      <input 
-        type="date" 
-        value={dueDate}
-        onChange={(e) => setDueDate(e.target.value)}
-        className="p-2.5 bg-white/60 border border-white/50 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-300/50 transition-all text-gray-700"
-      />
-      <select
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
-        className="p-2.5 bg-white/60 border border-white/50 rounded-xl focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-300/50 transition-all cursor-pointer text-gray-700"
-      >
-        {categories.map((c) => (
-          <option key={c} value={c}>{c}</option>
-        ))}
-      </select>
-      <button 
-        type="submit"
-        // ★ ボタンはAppleらしく、完全に丸いカプセル型（rounded-full）にし、少し立体感を出す
-        className="px-6 py-2.5 bg-blue-500/90 text-white font-bold rounded-full shadow-md hover:bg-blue-600 hover:shadow-lg transition-all cursor-pointer whitespace-nowrap"
-      >
-        追加
-      </button>
+      
+      {/* 期限選択・カテゴリ選択・追加ボタンのグループ */}
+      <div className="flex items-center gap-1.5 justify-end border-t sm:border-t-0 pt-2 sm:pt-0 border-zinc-200/60">
+        {/* 期限日（カレンダー）入力欄 */}
+        <input
+          type="date"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+          className="px-2 py-1 bg-white border border-zinc-200/80 rounded-lg text-xs text-zinc-600 focus:outline-none focus:border-zinc-400 cursor-pointer"
+        />
+
+        {/* カテゴリの選択プルダウン */}
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="px-2 py-1 bg-white border border-zinc-200/80 rounded-lg text-xs text-zinc-600 focus:outline-none focus:border-zinc-400 cursor-pointer"
+        >
+          {categories.map((c) => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+        </select>
+
+        {/* タスクの追加実行ボタン */}
+        <button 
+          type="submit" 
+          className="px-3.5 py-1.5 bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-medium rounded-lg transition-colors cursor-pointer whitespace-nowrap shadow-2xs"
+        >
+          追加
+        </button>
+      </div>
     </form>
   );
 };
