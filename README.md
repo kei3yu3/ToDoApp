@@ -1,75 +1,33 @@
-# React + TypeScript + Vite
+# Minimalist Todo App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+ミニマルで洗練されたUIデザインを追求した、React + TypeScript製のモダンなタスク管理アプリケーションです。
 
-Currently, two official plugins are available:
+## 🌟 主な機能 (Features)
+- **スマートな絞り込み**: 「すべて」「今日」「今週」「今月」の期間別フィルター。
+- **期限の並び替え**: 期限の近い順（昇順） / 遠い順（降順）の切り替え機能。
+- **カテゴリ管理**: 自由なカテゴリの追加・削除と、タスクごとの分類。
+- **ローカルストレージ保存**: ブラウザを閉じてもデータが消えない自動保存機能。
+- **レスポンシブ対応**: PC・スマートフォン双方の画面サイズに最適化されたレイアウト。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🛠 使用技術 (Tech Stack)
+- **Frontend**: React, TypeScript
+- **Styling**: Tailwind CSS
+- **Build Tool**: Vite
+- **Version Control**: Git / GitHub
 
-## React Compiler
+## 🚀 起動方法 (Getting Started)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+手元のローカル環境で実行する場合は、以下の手順に従ってください：
 
-## Expanding the ESLint configuration
+```bash
+# リポジトリのクローン
+git clone [https://github.com/kei3yu3/TodoApp.git](https://github.com/kei3yu3/TodoApp.git)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+# プロジェクトディレクトリへ移動
+cd TodoApp
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+# 依存パッケージのインストール
+npm install
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
-
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
-```
+# 開発サーバーの起動
+npm run dev
