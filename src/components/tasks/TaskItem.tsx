@@ -4,21 +4,23 @@ import type { Task } from '../../types';
 // TaskListから受け取る個別タスクデータと操作関数の型定義
 type Props = {
   task: Task;
+  categories: string[];
   onDeleteTask: (id: number) => void;
   onToggleTaskDone: (id: number) => void;
-  onEditTask: (id: number, newTitle: string, newDueDate: string) => void;
+  onEditTask: (id: number, newTitle: string, newDueDate: string, newCategory: string) => void;
 };
 
-export const TaskItem = ({ task, onDeleteTask, onToggleTaskDone, onEditTask }: Props) => {
+export const TaskItem = ({ task, categories, onDeleteTask, onToggleTaskDone, onEditTask }: Props) => {
   // 編集モードの開閉状態と、編集中の入力値を管理するState
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(task.title);
   const [editDueDate, setEditDueDate] = useState(task.dueDate);
+  const [editCategory, setEditCategory] = useState(task.category || '未設定');
 
   // 編集内容を保存して通常表示モードに戻す処理
   const handleSave = () => {
     if (!editTitle.trim()) return;
-    onEditTask(task.id, editTitle, editDueDate);
+    onEditTask(task.id, editTitle, editDueDate, editCategory);
     setIsEditing(false);
   };
 
@@ -51,6 +53,16 @@ export const TaskItem = ({ task, onDeleteTask, onToggleTaskDone, onEditTask }: P
               onChange={(e) => setEditDueDate(e.target.value)}
               className="px-2 py-1 bg-white border border-zinc-300 rounded-md text-xs text-zinc-600 focus:outline-none" 
             />
+            {/* 編集用のカテゴリ選択プルダウン */}
+            <select
+              value={editCategory}
+              onChange={(e) => setEditCategory(e.target.value)}
+              className="px-2 py-1 bg-white border border-zinc-300 rounded-md text-xs text-zinc-600 focus:outline-none cursor-pointer"
+            >
+              {categories.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
             <button 
               onClick={handleSave} 
               className="px-2.5 py-1 bg-zinc-900 text-white text-xs font-medium rounded-md hover:bg-zinc-800 transition-colors cursor-pointer whitespace-nowrap"

@@ -3,13 +3,14 @@ import type { Task } from '../../types';
 
 type Props = {
   tasks: Task[];
+  categories: string[];
   onDeleteTask: (id: number) => void;
   onToggleTaskDone: (id: number) => void;
   // ★ 受け取るルールを追加
-  onEditTask: (id: number, newTitle: string, newDueDate: string) => void;
+  onEditTask: (id: number, newTitle: string, newDueDate: string, newCategory: string) => void;
 };
 
-export const TaskList = ({ tasks, onDeleteTask, onToggleTaskDone, onEditTask }: Props) => {
+export const TaskList = ({ tasks, categories, onDeleteTask, onToggleTaskDone, onEditTask }: Props) => {
   // ★ タスクが1つもない時の表示（これもグラスモーフィズム化）
   if (tasks.length === 0) {
     return (
@@ -27,6 +28,7 @@ export const TaskList = ({ tasks, onDeleteTask, onToggleTaskDone, onEditTask }: 
         <TaskItem 
           key={task.id} 
           task={task} 
+          categories={categories}
           onDeleteTask={onDeleteTask} 
           onToggleTaskDone={onToggleTaskDone} 
           onEditTask={onEditTask}

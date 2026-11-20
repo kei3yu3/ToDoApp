@@ -85,10 +85,14 @@ function App() {
     );
   };
 
-  // 指定されたIDのタスク名と期限を更新する関数
-  const editTask = (id: number, newTitle: string, newDueDate: string) => {
+  // 指定されたIDのタスク名・期限・カテゴリを更新する関数
+  const editTask = (id: number, newTitle: string, newDueDate: string, newCategory: string) => {
     setTasks(
-      tasks.map((task) => (task.id === id ? { ...task, title: newTitle, dueDate: newDueDate } : task))
+      tasks.map((task) =>
+        task.id === id
+          ? { ...task, title: newTitle, dueDate: newDueDate, category: newCategory }
+          : task
+      )
     );
   };
 
@@ -186,6 +190,7 @@ function App() {
         <TaskForm onAddTask={addTask} categories={categories} />
         <TaskList 
           tasks={filteredTasks} 
+          categories={categories}
           onDeleteTask={deleteTask} 
           onToggleTaskDone={toggleTaskDone} 
           onEditTask={editTask} 
